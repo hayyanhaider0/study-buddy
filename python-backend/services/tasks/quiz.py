@@ -1,15 +1,15 @@
 import uuid
 import json
 from app.models.request import GenerateRequest
-from app.models.response import Quiz, QuizItem
+from app.models.response import QuizItem, QuizResponse
 from services.llm import call_llm
 
-async def generate_quiz(req: GenerateRequest, ocr_text: dict[str, list[str]]) -> Quiz:
+async def generate_quiz(req: GenerateRequest, ocr_text: dict[str, list[str]]) -> QuizResponse:
     prompt = build_prompt(req, ocr_text)
-    result = await call_llm(prompt)
+    result = await call_llm(prompt, req.task_type)
     
     items = [QuizItem(id=str(uuid.uuid4()), **item) for item in result["items"]]
-    return Quiz(
+    return QuizResponse(
         id=str(uuid.uuid4()),
         name=f"{req.notebook_name} Quiz",
         items=items

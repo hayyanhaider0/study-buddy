@@ -4,7 +4,7 @@ from services.llm import call_llm
 
 async def generate_flashcards(req: GenerateRequest, ocr_text: dict[str, list[str]]) -> FlashcardsResponse:
     prompt = build_prompt(req, ocr_text)
-    result = await call_llm(prompt)
+    result = await call_llm(prompt, req.task_type)
     print(result)
     
     import uuid
