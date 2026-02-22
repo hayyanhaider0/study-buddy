@@ -1,0 +1,71 @@
+# ========================
+# Backend (Spring Boot)
+# ========================
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ========================
+# Frontend (Expo)
+# ========================
+node_modules/
+android/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+.metro-health-check*
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.tsbuildinfo
+
+# ========================
+# Python Backend
+# ========================
+__pycache__/
+*.pyc
+*.pyo
+venv/
+results.txt
+
+# ========================
+# General
+# ========================
+.env
+.env*.local
+.DS_Store
+*.pem
+.vscode/
+.idea
+*.iws
+*.iml
+*.ipr
