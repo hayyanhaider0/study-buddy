@@ -11,7 +11,7 @@ import {
 	NOTEBOOK_ACTION,
 	notebookReducer,
 	INITIAL_STATE,
-} from "../reducers/notebookReducer"
+} from "../reducers/NotebookReducer"
 
 // Types for the notebook context.
 type NotebookContextType = {
