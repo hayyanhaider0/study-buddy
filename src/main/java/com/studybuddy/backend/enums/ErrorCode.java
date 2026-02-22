@@ -1,0 +1,12 @@
+package com.studybuddy.backend.enums;
+
+public enum ErrorCode {
+    RESOURCE_ALREADY_EXISTS,
+    USER_ALREADY_VERIFIED,
+    DUPLICATE_KEY,
+    RESOURCE_NOT_FOUND,
+    INVALID_REQUEST,
+    EMAIL_NOT_VERIFIED,
+    INVALID_TOKEN,
+    UNEXPECTED_ERROR
+}
