@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes import ocr
+from app.routes import generate
 
 app = FastAPI()
-app.include_router(ocr.router, prefix="/api/ocr", tags=["ocr"])
+app.include_router(generate.router, prefix="/api/ocr", tags=["ocr"])

@@ -1,23 +1,28 @@
 from http.client import HTTPException
 
-from fastapi import APIRouter
-from StudyBuddy.backend.ocr_pipeline.generate import GenerateRequest
+from fastapi import APIRouter, Depends
+from app.models.request import GenerateRequest
+from services.auth import verify_token
+# from services.tasks import generate_notes, generate_flashcards, generate_quiz, generate_exam
+from services.tasks import generate_flashcards
+from services.ocr import run_ocr
+
+TASK_HANDLERS = {
+    "flashcards": generate_flashcards,
+    # "notes": generate_notes,
+    # "quiz": generate_quiz,
+    # "exam": generate_exam
+}
 
 router = APIRouter()
 
-TASK_HANLDERS = {
-    "notes": generate_notes,
-    "flashcard": generate_flashcard,
-    "quiz": generate_quiz,
-    "exam": generate_exam
-}
-
 @router.post("/generate")
 async def generate(req: GenerateRequest):
-    handler = TASK_HANLDERS.get(req.taskType)
+# async def generate(req: GenerateRequest, user_id: str = Depends(verify_token)):
+    handler = TASK_HANDLERS.get(req.taskType)
 
     if not handler:
         raise HTTPException(status_code=400, detail=f"Unknown taskType: {req.taskType}")
     
-    ocr_text = await run_ocr_pipeline(req.chaptersWithCanvases)
+    ocr_text = await run_ocr(req.chaptersWithCanvases)
     return await handler(req, ocr_text)

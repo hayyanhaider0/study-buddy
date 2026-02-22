@@ -1,0 +1,1 @@
+from services.tasks.flashcards import generate_flashcards
