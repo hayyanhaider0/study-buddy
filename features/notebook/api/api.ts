@@ -1,0 +1,273 @@
+import client from "../../../api/client"
+import { ApiResponse, Color } from "../../../types/global"
+import { Canvas, Chapter, Notebook } from "../../../types/notebook"
+import { DrawingTool, SizePresetIndex } from "../../../types/tools"
+import { PathPoint, PathType } from "../../drawing/types/DrawingTypes"
+import { CanvasPattern } from "../components/CanvasBackground"
+
+// Notebooks
+export interface NotebookRequest {
+	title: string
+	color?: Color
+}
+
+export interface NotebookResponse {
+	id: string
+	title: string
+	color: string
+	createdAt: string
+	updatedAt: string
+	lastAccessedAt: string
+	chapters?: ChapterResponse[]
+	isDeleted: boolean
+}
+
+// Chapters
+export interface ChapterRequest {
+	title: string
+	order: number
+	notebookId: string
+}
+
+export interface ChapterResponse {
+	id: string
+	notebookId: string
+	title: string
+	order: number
+	createdAt: string
+	updatedAt: string
+	canvases?: CanvasResponse[]
+	isDeleted: boolean
+}
+
+// Canvases
+export interface CanvasRequest {
+	chapterId: string
+	notebookId: string
+	order: number
+}
+
+export interface CanvasUpdateRequest {
+	ids: string[]
+	chapterId: string
+	notebookId: string
+	color?: Color
+	pattern?: CanvasPattern
+	order?: number
+}
+
+export interface CanvasResponse {
+	id: string
+	chapterId: string
+	notebookId: string
+	color: string
+	pattern: string
+	order: number
+	createdAt: string
+	updatedAt: string
+	lastAccessedAt: string
+	isDeleted: boolean
+}
+
+// Paths
+export interface PathRequest {
+	tempId: string
+	canvasId: string
+	points: PathPoint[]
+	brushType: string
+	sizePresetIndex: SizePresetIndex
+	color: string
+	opacity: number
+}
+
+export interface PathResponse {
+	id: string
+	canvasId: string
+	points: PathPoint[]
+	brushType: string
+	sizePresetIndex: SizePresetIndex
+	color: string
+	opacity: number
+}
+
+export interface PathCreateResponse {
+	id: string
+	tempId: string
+}
+
+// Notebooks
+export const createNotebook = async (req: NotebookRequest): Promise<NotebookResponse> => {
+	const res = await client.post<ApiResponse<NotebookResponse>>("/notebooks", req)
+	return res.data.data!
+}
+
+export const updateNotebook = async (
+	id: string,
+	req: NotebookRequest
+): Promise<NotebookResponse> => {
+	const res = await client.patch<ApiResponse<NotebookResponse>>(`/notebooks/${id}`, req)
+	return res.data.data!
+}
+
+export const fetchNotebooks = async (): Promise<NotebookResponse[]> => {
+	const res = await client.get<ApiResponse<NotebookResponse[]>>("/notebooks")
+	return res.data.data!
+}
+
+export const deleteNotebook = async (id: string): Promise<void> => {
+	if (!id || id.startsWith("temp")) return
+	const res = await client.delete<ApiResponse<void>>(`/notebooks/${id}`)
+	return res.data.data!
+}
+
+export const mapToNotebook = (res: NotebookResponse): Notebook => {
+	const notebook = {
+		...res,
+		createdAt: new Date(res.createdAt).getTime(),
+		updatedAt: new Date(res.updatedAt).getTime(),
+		lastAccessedAt: new Date(res.lastAccessedAt).getTime(),
+		chapters: res.chapters?.map(mapToChapter) || [],
+		color: res.color as Color,
+	}
+
+	return notebook
+}
+
+// Chapters
+export const createChapter = async (req: ChapterRequest): Promise<ChapterResponse> => {
+	if (req.title.trim() === "") {
+		req.title = `Chapter ${req.order + 1}`
+	}
+	const res = await client.post<ApiResponse<ChapterResponse>>("/chapters", req)
+	return res.data.data!
+}
+
+export const updateChapter = async (id: string, req: Partial<Canvas>): Promise<ChapterResponse> => {
+	const res = await client.patch<ApiResponse<void>>(`/chapters/${id}`, req)
+	return res.data.data!
+}
+
+export const fetchChapters = async (notebookIds: string[]): Promise<ChapterResponse[]> => {
+	if (!notebookIds) throw new Error("[fetchChapters]: No notebook ids provided.")
+	const res = await client.post<ApiResponse<ChapterResponse[]>>("/chapters/by-notebooks", {
+		notebookIds,
+	})
+	return res.data.data!
+}
+
+export const deleteChapter = async (id: string): Promise<void> => {
+	if (!id || id.startsWith("temp")) return
+	const res = await client.delete<ApiResponse<void>>(`/chapters/${id}`)
+	return res.data.data!
+}
+
+export const mapToChapter = (res: ChapterResponse): Chapter => {
+	const chapter = {
+		...res,
+		createdAt: new Date(res.createdAt).getTime(),
+		updatedAt: new Date(res.updatedAt).getTime(),
+		canvases: res.canvases?.map(mapToCanvas) || [],
+	}
+
+	return chapter
+}
+
+// Canvases
+export const createCanvas = async (req: CanvasRequest): Promise<CanvasResponse> => {
+	const res = await client.post<ApiResponse<CanvasResponse>>("/canvases", req)
+	return res.data.data!
+}
+
+export const fetchCanvases = async (chapterIds: string[]): Promise<CanvasResponse[]> => {
+	if (!chapterIds) throw new Error("[fetchCanvases]: No chapter IDs provided.")
+	const res = await client.post<ApiResponse<CanvasResponse[]>>("/canvases/by-chapters", {
+		chapterIds,
+	})
+	return res.data.data!
+}
+
+export const updateCanvases = async (req: CanvasUpdateRequest): Promise<void> => {
+	const res = await client.patch<ApiResponse<void>>("/canvases", req)
+	return res.data.data!
+}
+
+export const deleteCanvas = async (id: string): Promise<void> => {
+	if (!id || id.startsWith("temp")) return
+	const res = await client.delete<ApiResponse<void>>(`/canvases/${id}`)
+	return res.data.data!
+}
+
+export const mapToCanvas = (res: CanvasResponse): Canvas => {
+	const canvas = {
+		...res,
+		color: res.color as Color,
+		pattern: res.pattern as CanvasPattern,
+		createdAt: new Date(res.createdAt).getTime(),
+		updatedAt: new Date(res.updatedAt).getTime(),
+		lastAccessedAt: new Date(res.lastAccessedAt).getTime(),
+		paths: [],
+		undoStack: [],
+		redoStack: [],
+	}
+
+	return canvas
+}
+
+// Paths
+export const createPaths = async (req: PathRequest[]): Promise<PathCreateResponse[]> => {
+	if (!req) throw new Error("notebooks/api.ts/[CREATE_PATHS]: Request must be provided.")
+	const res = await client.post<ApiResponse<PathCreateResponse[]>>("/paths", req)
+	return res.data.data!
+}
+
+export const fetchPaths = async (canvasIds: string[]): Promise<PathResponse[]> => {
+	if (!canvasIds) throw new Error("notebooks/api.ts/[FETCH_PATHS]: canvasIds must be provided.")
+	const res = await client.post<ApiResponse<PathResponse[]>>("/paths/by-canvases", canvasIds)
+	return res.data.data!
+}
+
+export const deletePaths = async (pathIds: string[]): Promise<void> => {
+	if (!pathIds || pathIds.length === 0)
+		throw new Error("notebooks/api.ts/[DELETE_PATHS]: pathIds must be provided.")
+	const pathIdsWithoutTemp = pathIds.filter((id) => !id.startsWith("temp"))
+	if (pathIdsWithoutTemp.length === 0) return
+	const res = await client.delete<ApiResponse<void>>("/paths", { data: pathIdsWithoutTemp })
+	return res.data.data!
+}
+
+export const mapToPathRequest = (path: PathType): PathRequest => {
+	const req: PathRequest = {
+		tempId: path.id,
+		canvasId: path.canvasId,
+		points: path.points,
+		brushType: path.brush.type.toUpperCase(),
+		sizePresetIndex: path.brush.sizePresetIndex,
+		color: path.brush.color,
+		opacity: path.brush.opacity,
+	}
+
+	return req
+}
+
+export const mapToPathType = (res: PathResponse): PathType => {
+	const path: PathType = {
+		id: res.id,
+		canvasId: res.canvasId,
+		points: res.points,
+		brush: {
+			type: res.brushType.toLowerCase() as DrawingTool,
+			color: res.color,
+			sizePresetIndex: res.sizePresetIndex,
+			opacity: res.opacity,
+		},
+	}
+
+	return path
+}
+
+// Syncing
+export const sync = async (req: any): Promise<void> => {
+	if (!req) throw new Error("notebooks/api.ts/[SYNC]: Request must be provided.")
+	const res = await client.post<ApiResponse<void>>("/sync", req)
+	return res.data.data!
+}
