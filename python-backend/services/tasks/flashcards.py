@@ -1,17 +1,17 @@
 from app.models.request import GenerateRequest
 from app.models.response import FlashcardItem, FlashcardsResponse
-from services.llm import call_gemini
+from services.llm import call_llm
 
 async def generate_flashcards(req: GenerateRequest, ocr_text: dict[str, list[str]]) -> FlashcardsResponse:
     prompt = build_prompt(req, ocr_text)
-    result = await call_gemini(prompt)
+    result = await call_llm(prompt)
     print(result)
     
     import uuid
     items = [FlashcardItem(id=str(uuid.uuid4()), **card) for card in result["items"]]
     return FlashcardsResponse(
         id=str(uuid.uuid4()),
-        name=f"{req.notebookName} Flashcards",
+        name=f"{req.notebook_name} Flashcards",
         items=items
     )
 
@@ -24,9 +24,9 @@ def build_prompt(req: GenerateRequest, ocr_text: dict[str, list[str]]) -> str:
     return f"""
     You are a study assistant generating flashcards from OCR-extracted notes.
     
-    Notebook: {req.notebookName}
+    Notebook: {req.notebook_name}
     Student occupation: {req.occupation or 'student'}
-    Education level: {req.educationLevel or 'university'}
+    Education level: {req.education_level or 'university'}
     
     Notes:
     {chapters_text}

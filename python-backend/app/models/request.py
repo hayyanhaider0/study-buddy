@@ -2,13 +2,13 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 class ChapterCanvas(BaseModel):
-    chapterName: str
+    chapter_name: str
     canvases: List[str] # base64 strings.
     
 class GenerateRequest(BaseModel):
-    taskType: str
+    task_type: str
     occupation: Optional[str]
-    educationLevel: Optional[str]
-    notebookName: str
-    chaptersWithCanvases: List[ChapterCanvas]
+    education_level: Optional[str]
+    notebook_name: str
+    chapters_with_canvases: List[ChapterCanvas]
     options: Optional[dict]
