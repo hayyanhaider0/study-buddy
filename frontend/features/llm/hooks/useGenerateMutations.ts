@@ -1,12 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
 import { useLLMContext } from "../contexts/LLMContext"
-import {
-	generate,
-	GenerateCreateResponse,
-	GenerateRequest,
-	GenerateResponse,
-	saveGeneratedContent,
-} from "../api/api"
+import { generate, GenerateRequest, GenerateResponse, saveGeneratedContent } from "../api/api"
 import { FlashcardItem, FlashcardsResponse, QuizItem, QuizResponse } from "../../../types/llm"
 
 export const useGenerateMutations = () => {

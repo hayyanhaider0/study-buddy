@@ -3,7 +3,6 @@ import pythonClient from "../../../api/pythonClient"
 import { ApiResponse } from "../../../types/global"
 import { FlashcardItem, FlashcardsResponse, QuizItem, QuizResponse } from "../../../types/llm"
 import { EducationLevel, Occupation } from "../../auth/contexts/AuthContext"
-
 export interface GenerateRequest {
 	taskType: "notes" | "flashcards" | "quiz" | "exam"
 	occupation: Occupation | null
@@ -14,7 +13,6 @@ export interface GenerateRequest {
 }
 
 export type GenerateResponse = FlashcardsResponse | QuizResponse
-
 export interface GenerateCreateRequest {
 	taskType: "notes" | "flashcards" | "quiz" | "exam"
 	notebookName: string
