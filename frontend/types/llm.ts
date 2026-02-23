@@ -5,14 +5,18 @@ export interface FlashcardItem {
 	explanation: string
 }
 
-export interface Flashcards {
+export interface FlashcardsResponse {
 	id: string
+	taskType: "flashcards"
+	notebookName: string
 	name: string
 	items: FlashcardItem[]
 }
 
-export interface Quiz {
+export interface QuizResponse {
 	id: string
+	taskType: "quiz"
+	notebookName: string
 	name: string
 	items: QuizItem[]
 }

@@ -1,6 +1,7 @@
 import client from "../../../api/client"
+import pythonClient from "../../../api/pythonClient"
 import { ApiResponse } from "../../../types/global"
-import { Chapter } from "../../../types/notebook"
+import { FlashcardItem, FlashcardsResponse, QuizItem, QuizResponse } from "../../../types/llm"
 import { EducationLevel, Occupation } from "../../auth/contexts/AuthContext"
 
 export interface GenerateRequest {
@@ -12,12 +13,27 @@ export interface GenerateRequest {
 	options: Record<string, string | boolean>
 }
 
-export interface GenerateResponse {
+export type GenerateResponse = FlashcardsResponse | QuizResponse
+
+export interface GenerateCreateRequest {
+	taskType: "notes" | "flashcards" | "quiz" | "exam"
 	notebookName: string
-	chapters: Chapter[]
+	name: string
+	items: FlashcardItem[] | QuizItem[]
+}
+
+export interface GenerateCreateResponse {
+	id: string
 }
 
 export const generate = async (req: GenerateRequest): Promise<GenerateResponse> => {
-	const res = await client.post<ApiResponse<GenerateResponse>>("/ai/generate", req)
+	const res = await pythonClient.post<ApiResponse<GenerateResponse>>("/generate", req)
+	return res.data.data!
+}
+
+export const saveGeneratedContent = async (
+	req: GenerateCreateRequest,
+): Promise<GenerateCreateResponse> => {
+	const res = await client.post<ApiResponse<GenerateCreateResponse>>("/ai/save", req)
 	return res.data.data!
 }

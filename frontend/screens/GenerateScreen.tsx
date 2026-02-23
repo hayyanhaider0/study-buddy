@@ -16,19 +16,28 @@ import { useGenerate } from "../features/llm/contexts/GenerateContext"
 import { llmSettingsGroup } from "../utils/llmOptions"
 import LLMSetting from "../features/llm/components/LLMSetting"
 import { useAuthContext } from "../features/auth/contexts/AuthContext"
-import { generate, GenerateRequest } from "../features/llm/api/api"
+import {
+	generate,
+	GenerateCreateResponse,
+	GenerateRequest,
+	GenerateResponse,
+	saveGeneratedContent,
+} from "../features/llm/api/api"
 import { useNotebookContext } from "../features/notebook/contexts/NotebookContext"
 import { getChapter, getNotebook } from "../utils/notebook"
 import { useEffect } from "react"
 import { Canvas } from "../types/notebook"
 import { Skia } from "@shopify/react-native-skia"
 import { toSkiaPath } from "../features/drawing/processors/PathProcessor"
+import {} from "../features/llm/reducers/FlashcardsReducer"
+import { useGenerateMutations } from "../features/llm/hooks/useGenerateMutations"
 
 export default function GenerateScreen() {
 	// Get values from context.
 	const { authState } = useAuthContext()
 	const { settings, selectedChapters, setSelectedChapters } = useGenerate()
 	const { notebookState } = useNotebookContext()
+	const { generateMutation } = useGenerateMutations()
 
 	// Get values from route.
 	const route = useRoute<RouteProp<RootStackParamList, "generate">>()
@@ -43,7 +52,7 @@ export default function GenerateScreen() {
 	 * Creates a JSON to send to the backend.
 	 * @returns A JSON for information to send to the OCR and LLM.
 	 */
-	const handleGenerate = () => {
+	const handleGenerate = async () => {
 		// Get the chapters with their canvases in base64.
 		const chaptersWithCanvases = selectedChapters
 			.map((chapterId) => {
@@ -60,7 +69,7 @@ export default function GenerateScreen() {
 						return renderCanvasToBase64(cv, 360, 640)
 					})
 					// Filter null canvases.
-					.filter((canvas): canvas is string => canvas !== null)
+					.filter((canvas): canvas is string => canvas !== null && canvas !== undefined)
 
 				// Skip chapters with no valid canvases.
 				if (canvases.length === 0) return null
@@ -73,21 +82,17 @@ export default function GenerateScreen() {
 		// Don't call API if there are no chapters.
 		if (chaptersWithCanvases.length === 0) return
 
-		// Create a request.
-		const req: GenerateRequest = {
-			taskType,
-			occupation: authState.occupation,
-			educationLevel: authState.educationLevel,
-			notebookName: notebook?.title!,
-			chaptersWithCanvases,
-			options: getFlatJSON(),
-		}
-
 		// Empty selected chapters.
 		setSelectedChapters([])
 
-		// Generate.
-		generate(req)
+		generateMutation.mutate({
+			taskType,
+			occupation: authState.occupation,
+			educationLevel: authState.educationLevel,
+			notebookName: notebook?.title || "Untitled Notebook",
+			chaptersWithCanvases,
+			options: getFlatJSON(),
+		})
 	}
 
 	/**
@@ -101,25 +106,31 @@ export default function GenerateScreen() {
 	const renderCanvasToBase64 = (
 		canvas: Canvas,
 		width: number,
-		height: number
+		height: number,
 	): string | undefined => {
 		// Create a Skia off screen surface.
 		const skCanvas = Skia.Surface.MakeOffscreen(width, height)
 		if (!skCanvas) return
 
 		// Convert paths to Skia paths.
-		canvas.paths.forEach((path) => {
-			const skPath = toSkiaPath(path.points, path.brush, width, height)
-			const skPaint = Skia.Paint()
-			skPaint.setColor(Skia.Color(path.brush.color))
-			skCanvas.getCanvas().drawPath(skPath!, skPaint)
-		})
+		try {
+			canvas.paths.forEach((path) => {
+				const skPath = toSkiaPath(path.points, path.brush, width, height)
+				const skPaint = Skia.Paint()
+				skPaint.setColor(Skia.Color(path.brush.color))
+				skCanvas.getCanvas().drawPath(skPath!, skPaint)
+			})
+		} catch (e) {
+			console.log("Error drawing path:", e)
+		}
 
 		// Take snapshot.
 		const image = skCanvas.makeImageSnapshot()
+		const base64 = image.encodeToBase64()
 
+		console.log("Base64 length:", base64?.length)
 		// Return encoded base64 image.
-		return image.encodeToBase64()
+		return base64
 	}
 
 	/**

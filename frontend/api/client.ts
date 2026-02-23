@@ -7,7 +7,9 @@ import Constants from "expo-constants"
 import { getToken } from "../utils/secureStore"
 
 const API_BASE_URL = Constants.expoConfig?.extra?.apiBaseUrl
+const GENERATE_BASE_URL = Constants.expoConfig?.extra?.generateBaseUrl
 console.log("API Base URL:", API_BASE_URL)
+console.log("Generate Base URL:", GENERATE_BASE_URL)
 
 const client = axios.create({
 	baseURL: API_BASE_URL,

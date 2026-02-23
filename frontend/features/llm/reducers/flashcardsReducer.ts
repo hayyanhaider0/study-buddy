@@ -7,11 +7,11 @@
  * Includes settings, adding, updating, and removing flashcards.
  */
 
-import { Flashcards } from "../../../types/llm"
+import { FlashcardsResponse } from "../../../types/llm"
 
 export interface FlashcardState {
 	// List of flashcards.
-	flashcards: Flashcards[]
+	flashcards: FlashcardsResponse[]
 }
 
 // Initial flashcards.
@@ -21,15 +21,15 @@ export const FLASHCARDS_INITIAL_STATE: FlashcardState = {
 
 // All possible actions for flashcards.
 export type FlashcardAction =
-	| { type: "SET"; flashcards: Flashcards[] }
-	| { type: "ADD"; flashcard: Flashcards }
-	| { type: "UPDATE"; id: string; flashcard: Partial<Flashcards> }
+	| { type: "SET"; flashcards: FlashcardsResponse[] }
+	| { type: "ADD"; flashcard: FlashcardsResponse }
+	| { type: "UPDATE"; id: string; flashcard: Partial<FlashcardsResponse> }
 	| { type: "REMOVE"; id: string }
 
 // Reducer function for managing flashcard state.
-export default function flashcardsReducer(
+export default function FlashcardsReducer(
 	state: FlashcardState,
-	action: FlashcardAction
+	action: FlashcardAction,
 ): FlashcardState {
 	switch (action.type) {
 		// Set a new deck of flashcards.
@@ -43,7 +43,7 @@ export default function flashcardsReducer(
 			return {
 				...state,
 				flashcards: state.flashcards.map((f) =>
-					f.id === action.id ? { ...f, ...action.flashcard } : f
+					f.id === action.id ? { ...f, ...action.flashcard } : f,
 				),
 			}
 		// Remove a deck of flashcards.

@@ -1,5 +1,12 @@
 package com.studybuddy.backend.dto.llm;
 
-public abstract class GenerateResponse {
-    private String taskType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class GenerateResponse {
+    private String id;
 }
