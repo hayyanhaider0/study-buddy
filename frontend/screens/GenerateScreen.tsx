@@ -16,6 +16,16 @@ import { useGenerate } from "../features/llm/contexts/GenerateContext"
 import { llmSettingsGroup } from "../utils/llmOptions"
 import LLMSetting from "../features/llm/components/LLMSetting"
 import { useAuthContext } from "../features/auth/contexts/AuthContext"
+<<<<<<< HEAD
+=======
+import {
+	generate,
+	GenerateCreateResponse,
+	GenerateRequest,
+	GenerateResponse,
+	saveGeneratedContent,
+} from "../features/llm/api/api"
+>>>>>>> 12ac40cdd4ec2c091eb535a82b6e2a922b168d94
 import { useNotebookContext } from "../features/notebook/contexts/NotebookContext"
 import { getChapter, getNotebook } from "../utils/notebook"
 import { useEffect } from "react"
