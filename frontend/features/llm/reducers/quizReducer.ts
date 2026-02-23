@@ -7,11 +7,11 @@
  * Includes settings, adding, updating, and removing quizzes.
  */
 
-import { Quiz } from "../../../types/llm"
+import { QuizResponse } from "../../../types/llm"
 
 export interface QuizState {
 	// List of quizzes.
-	quizzes: Quiz[]
+	quizzes: QuizResponse[]
 }
 
 // Initial quiz state.
@@ -21,12 +21,12 @@ export const QUIZ_INITIAL_STATE: QuizState = {
 
 // All quiz related actions.
 export type QuizAction =
-	| { type: "SET"; quizzes: Quiz[] }
-	| { type: "ADD"; quiz: Quiz }
-	| { type: "UPDATE"; id: string; quiz: Partial<Quiz> }
+	| { type: "SET"; quizzes: QuizResponse[] }
+	| { type: "ADD"; quiz: QuizResponse }
+	| { type: "UPDATE"; id: string; quiz: Partial<QuizResponse> }
 	| { type: "REMOVE"; id: string }
 
-export default function quizReducer(state: QuizState, action: QuizAction): QuizState {
+export default function QuizReducer(state: QuizState, action: QuizAction): QuizState {
 	switch (action.type) {
 		// Set a new quiz list.
 		case "SET":

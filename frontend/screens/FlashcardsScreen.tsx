@@ -15,7 +15,7 @@ import { FlashcardStackParamList } from "../navigation/FlashcardStackNavigator"
 
 export default function FlashcardsScreen() {
 	// Get context values.
-	const { flashcardState } = useLLMContext()
+	const { flashcardsState } = useLLMContext()
 
 	// Theming
 	const { GlobalStyles } = useThemeContext()
@@ -26,7 +26,7 @@ export default function FlashcardsScreen() {
 	return (
 		<CustomScrollView>
 			<Grid
-				data={flashcardState.flashcards.map((f, i) => (
+				data={flashcardsState.flashcards.map((f, i) => (
 					<Pressable
 						key={i}
 						onPress={() => {

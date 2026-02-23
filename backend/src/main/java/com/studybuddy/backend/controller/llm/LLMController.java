@@ -20,10 +20,10 @@ public class LLMController {
         this.llmService = llmService;
     }
 
-    @PostMapping("/generate")
-    public ResponseEntity<ApiResponse<GenerateResponse>> generate(@RequestBody GenerateRequest req) {
-        GenerateResponse resData = llmService.generate(req);
-
-        return ResponseEntity.ok(new ApiResponse<GenerateResponse>(true, resData, null, "Generated successfully."));
+    @PostMapping("/save")
+    public ResponseEntity<ApiResponse<GenerateResponse>> saveGeneratedContent(@RequestBody GenerateRequest req) {
+        GenerateResponse resData = llmService.saveGeneratedContent(req);
+        return ResponseEntity.ok(new ApiResponse<GenerateResponse>(true, resData, null,
+                "Content " + req.getTaskType() + " saved successfully."));
     }
 }

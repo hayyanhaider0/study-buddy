@@ -16,6 +16,7 @@ router = APIRouter()
 
 @router.post("/generate")
 async def generate(req: GenerateRequest) -> ApiResponse:
+    print("Received generate request:", req)
 # async def generate(req: GenerateRequest, user_id: str = Depends(verify_token)):
     handler = TASK_HANDLERS.get(req.task_type)
 

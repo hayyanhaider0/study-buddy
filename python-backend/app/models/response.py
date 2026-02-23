@@ -9,6 +9,7 @@ class ApiResponse(BaseModel):
 
 class FlashcardItem(BaseModel):
     id: str
+    type: str = "flashcard"
     question: str
     answer: str
     explanation: str
@@ -22,6 +23,7 @@ class FlashcardsResponse(BaseModel):
 
 class QuizItem(BaseModel):
     id: str
+    type: str = "quiz"
     question: str
     options: list[str]
     answer: str
