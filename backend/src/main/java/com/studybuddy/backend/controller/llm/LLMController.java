@@ -1,14 +1,19 @@
 package com.studybuddy.backend.controller.llm;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.studybuddy.backend.dto.ApiResponse;
+import com.studybuddy.backend.dto.llm.Flashcards;
 import com.studybuddy.backend.dto.llm.GenerateRequest;
 import com.studybuddy.backend.dto.llm.GenerateResponse;
+import com.studybuddy.backend.dto.llm.Quiz;
 import com.studybuddy.backend.service.llm.LLMService;
 
 @RestController
@@ -25,5 +30,19 @@ public class LLMController {
         GenerateResponse resData = llmService.saveGeneratedContent(req);
         return ResponseEntity.ok(new ApiResponse<GenerateResponse>(true, resData, null,
                 "Content " + req.getTaskType() + " saved successfully."));
+    }
+
+    @GetMapping("/flashcards")
+    public ResponseEntity<ApiResponse<List<Flashcards>>> getFlashcards() {
+        List<Flashcards> resData = llmService.getFlashcards();
+        return ResponseEntity
+                .ok(new ApiResponse<List<Flashcards>>(true, resData, null, "Flashcards fetched successfully."));
+    }
+
+    @GetMapping("/quizzes")
+    public ResponseEntity<ApiResponse<List<Quiz>>> getQuizzes() {
+        List<Quiz> resData = llmService.getQuizzes();
+        return ResponseEntity
+                .ok(new ApiResponse<List<Quiz>>(true, resData, null, "Quizzes fetched successfully."));
     }
 }

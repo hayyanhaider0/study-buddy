@@ -1,5 +1,7 @@
 package com.studybuddy.backend.service.llm;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import com.studybuddy.backend.dto.llm.Flashcards;
 import com.studybuddy.backend.dto.llm.GenerateRequest;
@@ -45,6 +47,16 @@ public class LLMService {
         }
 
         return resData;
+    }
+
+    public List<Flashcards> getFlashcards() {
+        String userId = authUtil.getCurrentUserId();
+        return flashcardsRepository.findAllByUserId(userId);
+    }
+
+    public List<Quiz> getQuizzes() {
+        String userId = authUtil.getCurrentUserId();
+        return quizRepository.findAllByUserId(userId);
     }
 
     private Flashcards mapToFlashcards(GenerateRequest req, String userId) {

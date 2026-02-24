@@ -10,5 +10,5 @@ import com.studybuddy.backend.dto.llm.Flashcards;
 public interface FlashcardsRepository extends MongoRepository<Flashcards, String> {
     Optional<Flashcards> findById(String id);
 
-    List<Flashcards> findByUserId(String userId);
+    List<Flashcards> findAllByUserId(String userId);
 }
