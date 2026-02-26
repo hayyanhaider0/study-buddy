@@ -21,13 +21,13 @@ type FlashcardScreenRouteProp = RouteProp<FlashcardStackParamList, "flashcard">
 export default function FlashcardScreen({ route }: { route: FlashcardScreenRouteProp }) {
 	// Get context values and extract the current flashcard deck.
 	const { id } = route.params
-	const { flashcardState } = useLLMContext()
-	const flashcard = flashcardState.flashcards.find((f) => f.id === id)
+	const { flashcardsState } = useLLMContext()
+	const flashcard = flashcardsState.flashcards.find((f) => f.id === id)
 	if (!flashcard) return
 
 	const [questionIndex, setQuestionIndex] = useState<number>(0) // Tracks the question index.
 	const [flipped, setFlipped] = useState<boolean[]>( // Tracks which of the cards are flipped.
-		flashcard ? new Array(flashcard.items.length).fill(false) : []
+		flashcard ? new Array(flashcard.items.length).fill(false) : [],
 	)
 
 	// Theming.
@@ -74,13 +74,13 @@ export default function FlashcardScreen({ route }: { route: FlashcardScreenRoute
 
 							{/* Flipped Details */}
 							<MotiView animate={{ opacity: flipped[questionIndex] ? 1 : 0 }} style={{ gap: 8 }}>
-								<HorizontalRule />
+								<HorizontalRule width='100%' />
 								{/* Answer */}
 								<GradientText
 									text={currentQuestion.answer}
 									style={[GlobalStyles.subheading, { fontWeight: 100 }]}
 								/>
-								<HorizontalRule />
+								<HorizontalRule width='100%' />
 								{/* Explanation */}
 								<Text style={GlobalStyles.paragraph}>{currentQuestion.explanation}</Text>
 							</MotiView>
