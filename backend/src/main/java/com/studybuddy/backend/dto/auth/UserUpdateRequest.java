@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UpdateUserRequest {
+public class UserUpdateRequest {
     // Core fields
     private String email;
     private String username;

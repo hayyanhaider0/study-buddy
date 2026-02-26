@@ -3,12 +3,15 @@ package com.studybuddy.backend.service.llm;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import com.studybuddy.backend.dto.llm.Flashcards;
+
 import com.studybuddy.backend.dto.llm.GenerateRequest;
 import com.studybuddy.backend.dto.llm.GenerateResponse;
-import com.studybuddy.backend.dto.llm.Quiz;
-import com.studybuddy.backend.dto.llm.embedded.FlashcardItem;
-import com.studybuddy.backend.dto.llm.embedded.QuizItem;
+import com.studybuddy.backend.dto.llm.QuizItemUserResponseRequest;
+import com.studybuddy.backend.entity.llm.Flashcards;
+import com.studybuddy.backend.entity.llm.Quiz;
+import com.studybuddy.backend.entity.llm.embedded.FlashcardItem;
+import com.studybuddy.backend.entity.llm.embedded.QuizItem;
+import com.studybuddy.backend.entity.llm.embedded.QuizItemUserResponse;
 import com.studybuddy.backend.exception.InvalidRequestException;
 import com.studybuddy.backend.repository.FlashcardsRepository;
 import com.studybuddy.backend.repository.QuizRepository;
@@ -57,6 +60,22 @@ public class LLMService {
     public List<Quiz> getQuizzes() {
         String userId = authUtil.getCurrentUserId();
         return quizRepository.findAllByUserId(userId);
+    }
+
+    public void updateUserResponse(QuizItemUserResponseRequest req) {
+        Quiz quiz = quizRepository.findById(req.getQuizId())
+                .orElseThrow(() -> new InvalidRequestException("Quiz with id: " + req.getQuizId() + " not found."));
+
+        QuizItemUserResponse userResponse = req.getResponse();
+
+        for (QuizItem item : quiz.getItems()) {
+            if (item.getId().equals(userResponse.getItemId())) {
+                item.setResponse(userResponse);
+                break;
+            }
+        }
+
+        quizRepository.save(quiz);
     }
 
     private Flashcards mapToFlashcards(GenerateRequest req, String userId) {

@@ -16,7 +16,7 @@ import com.studybuddy.backend.dto.auth.CodeRequest;
 import com.studybuddy.backend.dto.auth.LoginRequest;
 import com.studybuddy.backend.dto.auth.ResetPasswordRequest;
 import com.studybuddy.backend.dto.auth.SignupRequest;
-import com.studybuddy.backend.dto.auth.UpdateUserRequest;
+import com.studybuddy.backend.dto.auth.UserUpdateRequest;
 import com.studybuddy.backend.service.auth.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,11 +33,10 @@ public class AuthController {
 
     @PostMapping("/signup")
     @Operation(summary = "Register user", description = "Creates a new user with email, username, and password.")
-    public ResponseEntity<ApiResponse<Map<String, String>>> signup(@Valid @RequestBody SignupRequest req) {
-        Map<String, String> resData = authService.signup(req);
-        ApiResponse<Map<String, String>> res = new ApiResponse<Map<String, String>>(true, resData, null,
-                "User registered successfully.");
-        return ResponseEntity.status(HttpStatus.CREATED).body(res);
+    public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody SignupRequest req) {
+        authService.signup(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new ApiResponse<Void>(false, null, null, "User " + req.getUsername() + " registered successfully."));
     }
 
     @PostMapping("/verify-email")
@@ -100,7 +99,7 @@ public class AuthController {
 
     @PatchMapping("/")
     @Operation(summary = "Update user details", description = "Updates the user's preferences/account details.")
-    public ResponseEntity<ApiResponse<Void>> updateUser(@RequestBody UpdateUserRequest req) {
+    public ResponseEntity<ApiResponse<Void>> updateUser(@RequestBody UserUpdateRequest req) {
         System.out.println("Request:\n" + req);
         authService.updateUser(req);
         return ResponseEntity.ok(new ApiResponse<Void>(false, null, null, "User updated successfully."));

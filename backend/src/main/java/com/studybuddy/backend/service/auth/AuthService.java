@@ -17,7 +17,7 @@ import com.mongodb.DuplicateKeyException;
 import com.studybuddy.backend.dto.auth.AuthResponse;
 import com.studybuddy.backend.dto.auth.LoginRequest;
 import com.studybuddy.backend.dto.auth.SignupRequest;
-import com.studybuddy.backend.dto.auth.UpdateUserRequest;
+import com.studybuddy.backend.dto.auth.UserUpdateRequest;
 import com.studybuddy.backend.entity.auth.User;
 import com.studybuddy.backend.entity.auth.embedded.UserPreferences;
 import com.studybuddy.backend.entity.auth.embedded.UserSecurity;
@@ -60,7 +60,7 @@ public class AuthService {
      * 
      * @param req - The sign up request.
      */
-    public Map<String, String> signup(SignupRequest req) {
+    public void signup(SignupRequest req) {
         final String normalizedEmail = normalizeString(req.getEmail());
         final String normalizedUsername = normalizeString(req.getUsername());
 
@@ -72,29 +72,12 @@ public class AuthService {
         Instant expiry = Instant.now().plusSeconds(SECONDS_TO_MINUTES * 5);
 
         User user = new User(normalizedEmail, normalizedUsername, req.getUsername(), encodedPassword);
-
         UserSecurity security = user.getSecurity();
         security.setVerificationCode(code);
         security.setVerificationCodeExpiry(expiry);
 
-        // Check if the user already exists.
-        try {
-            userRepository.save(user);
-        } catch (DuplicateKeyException e) {
-            String msg = "User already exists";
-            String errMsg = e.getMessage().toLowerCase();
-
-            if (errMsg.contains("username"))
-                msg = "Username already exists.";
-            if (errMsg.contains("email"))
-                msg = "Email already exists.";
-            throw new ResourceAlreadyExistsException(msg);
-        }
-
         // Send verification email.
         emailService.sendCodeEmail(normalizedEmail, code, "Verification");
-
-        return Collections.singletonMap("email", normalizedEmail);
     }
 
     /**
@@ -300,7 +283,7 @@ public class AuthService {
      * 
      * @param req - User fields that need to be updated.
      */
-    public void updateUser(UpdateUserRequest req) {
+    public void updateUser(UserUpdateRequest req) {
         User user = userRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User with username: " + req.getUsername() + " not found."));

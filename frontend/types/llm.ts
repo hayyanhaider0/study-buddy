@@ -27,4 +27,6 @@ export interface QuizItem {
 	options: string[]
 	answer: string
 	explanation: string
+	selectedIndex?: number
+	correct?: boolean
 }

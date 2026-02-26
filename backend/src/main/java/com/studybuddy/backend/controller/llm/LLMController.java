@@ -4,16 +4,18 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.studybuddy.backend.dto.ApiResponse;
-import com.studybuddy.backend.dto.llm.Flashcards;
 import com.studybuddy.backend.dto.llm.GenerateRequest;
 import com.studybuddy.backend.dto.llm.GenerateResponse;
-import com.studybuddy.backend.dto.llm.Quiz;
+import com.studybuddy.backend.dto.llm.QuizItemUserResponseRequest;
+import com.studybuddy.backend.entity.llm.Flashcards;
+import com.studybuddy.backend.entity.llm.Quiz;
 import com.studybuddy.backend.service.llm.LLMService;
 
 @RestController
@@ -44,5 +46,11 @@ public class LLMController {
         List<Quiz> resData = llmService.getQuizzes();
         return ResponseEntity
                 .ok(new ApiResponse<List<Quiz>>(true, resData, null, "Quizzes fetched successfully."));
+    }
+
+    @PatchMapping("/quizzes/response")
+    public ResponseEntity<ApiResponse<Void>> updateUserResponse(@RequestBody QuizItemUserResponseRequest response) {
+        llmService.updateUserResponse(response);
+        return ResponseEntity.ok(new ApiResponse<Void>(true, null, null, "Quiz response updated successfully."));
     }
 }

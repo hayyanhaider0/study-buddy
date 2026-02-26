@@ -1,4 +1,4 @@
-package com.studybuddy.backend.dto.llm.embedded;
+package com.studybuddy.backend.entity.llm.embedded;
 
 import java.util.List;
 
@@ -16,4 +16,5 @@ public class QuizItem extends Item {
     private List<String> options;
     private String answer;
     private String explanation;
+    private QuizItemUserResponse response;
 }

@@ -2,7 +2,7 @@ package com.studybuddy.backend.dto.llm;
 
 import java.util.List;
 
-import com.studybuddy.backend.dto.llm.embedded.Item;
+import com.studybuddy.backend.entity.llm.embedded.Item;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

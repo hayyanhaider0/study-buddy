@@ -1,4 +1,4 @@
-package com.studybuddy.backend.dto.llm.embedded;
+package com.studybuddy.backend.entity.llm.embedded;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.studybuddy.backend.dto.llm.embedded;
+package com.studybuddy.backend.entity.llm.embedded;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

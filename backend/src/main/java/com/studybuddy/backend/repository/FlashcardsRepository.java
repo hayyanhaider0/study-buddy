@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.studybuddy.backend.dto.llm.Flashcards;
+import com.studybuddy.backend.entity.llm.Flashcards;
 
 public interface FlashcardsRepository extends MongoRepository<Flashcards, String> {
     Optional<Flashcards> findById(String id);
